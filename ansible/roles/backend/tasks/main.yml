@@ -1,0 +1,19 @@
+- name: Trigger Build Role
+  include_role:
+    name: build_role
+
+- name: Stop backend 
+  import_tasks: stop.yml
+  tags: stop
+
+- name: Install backend
+  import_tasks: install.yml
+  tags: install
+
+- name: Configure
+  import_tasks: configure.yml
+  tags: configure 
+
+- name: Start backend
+  import_tasks: start.yml
+  tags: start

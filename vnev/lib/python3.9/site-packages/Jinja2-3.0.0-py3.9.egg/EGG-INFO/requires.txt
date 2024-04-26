@@ -1,0 +1,4 @@
+MarkupSafe>=2.0.0rc2
+
+[i18n]
+Babel>=2.7

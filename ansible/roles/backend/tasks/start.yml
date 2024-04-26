@@ -1,0 +1,5 @@
+- name: Start backend
+  become: true
+  become_user: volkan
+  shell: "minikube kubectl -- apply -k {{ backend_path }}/Kubernetes/kubernetes-config"
+    

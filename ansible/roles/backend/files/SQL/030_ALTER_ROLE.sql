@@ -1,0 +1,2 @@
+ALTER ROLE stock WITH PASSWORD '2cNUVfN~Fp`2Zzh3EV2rcV49&~^Ev4y%';
+ALTER ROLE postgres WITH PASSWORD 'EF`wzHV%r5bt`57~jmPCFezwMRL%gZme';

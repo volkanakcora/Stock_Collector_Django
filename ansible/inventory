@@ -1,0 +1,8 @@
+[all:vars]
+ansible_connection=ssh
+ansible_user=volkan
+ansible_ssh_pass=ccf55660
+
+
+[kpihost]
+192.168.0.31 ansible_sudo_pass='ccf55660'

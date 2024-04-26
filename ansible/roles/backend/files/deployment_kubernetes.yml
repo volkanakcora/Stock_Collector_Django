@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: stockcollector-prod-claim
+  namespace: production
+  labels:
+    tier: production
+    app: stockcollector
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stockcollector-deployment
+  namespace: production
+  labels:
+    tier: production
+    app: stockcollector
+spec:
+  replicas: 1  # Adjust the number of replicas as needed
+  selector:
+    matchLabels:
+      tier: production
+      app: stockcollector
+  template:
+    metadata:
+      labels:
+        tier: production
+        app: stockcollector
+    spec:
+      containers:
+        - name: stock-prod
+          image: volkanakcora96/stock_collector
+          command: ["/bin/bash","-c"]
+          args: ["stock_collector makemigrations","stock_collector migrate", "stock_collector runserver"]
+          volumeMounts:
+            - name: stock-prod-pv
+              mountPath: /var
+      dnsPolicy: "None"
+      dnsConfig:
+        nameservers:
+          - 8.8.8.8
+      nodeSelector:
+        tier: production
+      tolerations:
+        - key: "tier"
+          operator: "Equal"
+          value: "production"
+          effect: "NoSchedule"
+      volumes:
+        - name: stock-prod-pv
+          persistentVolumeClaim:
+            claimName: stockcollector-prod-claim
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - stockcollector
+              topologyKey: kubernetes.io/hostname
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stock-prod-svc
+  namespace: production
+  labels:
+    tier: production
+    app: stockcollector
+spec:
+  selector:
+    tier: production
+    app: stockcollector
+  ports:
+    - protocol: TCP
+      port: 80  # The port on which the service will be exposed
+      targetPort: 80  # The port to which traffic will be forwarded inside the pod
+
+

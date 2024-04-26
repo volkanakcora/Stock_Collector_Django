@@ -1,0 +1,10 @@
+- name: Create backend folder
+  file:
+    path: "{{ backend_path }}"
+    state: directory
+    owner: "{{ backend_user }}"
+    group: "{{ backend_user }}"
+
+
+
+

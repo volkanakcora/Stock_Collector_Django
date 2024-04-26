@@ -1,0 +1,10 @@
+backend_user: "volkan"
+backend_path: "/opt/kpi/backend"
+
+# Package src and dest
+# NOTE: Github auth required to download wheel. So for now just expexting a the wheel to be in energy.statuspage/ansible/playbooks/files/energy_status_page.whl
+#backend_wheel_url: "https://github.deutsche-boerse.de/dev/energy.statuspage/releases/download/v0.1.1/energy_status_page-0.1.1-py3-none-any.whl
+
+# Config files
+sql_scripts: "files/SQL/"
+kubernetes_script: "files/kubernetes-config"

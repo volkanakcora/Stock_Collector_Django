@@ -1,0 +1,5 @@
+- name: Stop the current deployment
+  become: true
+  become_user: volkan
+  shell: "minikube kubectl -- delete -n production deployment.apps stockcollector"
+    

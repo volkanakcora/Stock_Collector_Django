@@ -1,0 +1,14 @@
+- name: Deploy sql  scripts
+  copy:
+    src: "{{ sql_scripts }}"
+    dest: "{{ backend_path }}/SQL/"
+    owner: "{{ backend_user }}"
+    group: "{{ backend_user }}"
+
+
+- name: Deploy kubernetes  scripts
+  copy:
+    src: "{{ kubernetes_script }}"
+    dest: "{{ backend_path }}/Kubernetes/"
+    owner: "{{ backend_user }}"
+    group: "{{ backend_user }}"
