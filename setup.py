@@ -108,8 +108,9 @@ setup(
     # Packages to include into the distribution
     packages=find_packages("."),
     include_package_data=True,
-    scripts=['stockcollector/manage.py'],
     # Start with a small number and increase it with
+    package_data={'': ['*.html'],
+    },
     # every change you make https://semver.org
     version="1.0.0",
     # Chose a license from here: https: //

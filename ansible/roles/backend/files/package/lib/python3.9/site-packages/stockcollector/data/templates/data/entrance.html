@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Welcome to the Stock Analytics Website!</h1>
+  <p>Explore the available tools and data:</p>
+  <ul>
+    <li><a href="{% url 'daily_change' %}">View Sorted Stock Data</a></li>
+    </ul>
+{% endblock %}

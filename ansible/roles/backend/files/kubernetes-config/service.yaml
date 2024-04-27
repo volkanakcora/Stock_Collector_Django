@@ -11,6 +11,5 @@ spec:
     tier: production
     app: stockcollector
   ports:
-    - protocol: TCP
-      port: 80  # The port on which the service will be exposed
-      targetPort: 80  # The port to which traffic will be forwarded inside the pod
+    - port: 80 # The port on which the service will be exposed
+      targetPort: 9091 # The port to which traffic will be forwarded inside the pod

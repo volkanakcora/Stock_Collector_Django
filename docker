@@ -7,7 +7,9 @@ ENV HTTP_PROXY=http://webproxy.deutsche-boerse.de:8080
 ENV http_proxy=http://webproxy.deutsche-boerse.de:8080
 WORKDIR /usr/src/app
 COPY ansible/roles/backend/files/stock_collector-1.0.0-py3-none-any.whl .
+COPY script.sh .
 RUN apt-get update -y --no-install-recommends \
     && apt-get -y install vim \
+    && apt-get install -y iputils-ping \
     && pip3 install stock_collector-1.0.0-py3-none-any.whl \
     && rm -rf /var/lib/apt/lists/*

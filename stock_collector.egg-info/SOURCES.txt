@@ -18,6 +18,11 @@ stockcollector/data/views.py
 stockcollector/data/migrations/0001_initial.py
 stockcollector/data/migrations/0002_alter_stock_adjusted_close_alter_stock_close_price_and_more.py
 stockcollector/data/migrations/__init__.py
+stockcollector/data/templates/__init__.py
+stockcollector/data/templates/base.html
+stockcollector/data/templates/data/__init__.py
+stockcollector/data/templates/data/daily_change.html
+stockcollector/data/templates/data/entrance.html
 stockcollector/data/utils/__init__.py
 stockcollector/data/utils/functions.py
 stockcollector/data/utils/micro_macro_functions.py
