@@ -2,7 +2,7 @@
   include_role:
     name: build_role
 
-- name: Stop backend 
+- name: Stop backend
   import_tasks: stop.yml
   tags: stop
 
@@ -12,7 +12,7 @@
 
 - name: Configure
   import_tasks: configure.yml
-  tags: configure 
+  tags: configure
 
 - name: Start backend
   import_tasks: start.yml

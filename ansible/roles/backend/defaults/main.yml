@@ -6,5 +6,6 @@ backend_path: "/opt/kpi/backend"
 #backend_wheel_url: "https://github.deutsche-boerse.de/dev/energy.statuspage/releases/download/v0.1.1/energy_status_page-0.1.1-py3-none-any.whl
 
 # Config files
-sql_scripts: "files/SQL/"
 kubernetes_script: "files/kubernetes-config"
+systemd_stock: "kpistock.service.j2"
+systemd_dest: "/etc/systemd/system/kpistock.service"

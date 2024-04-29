@@ -1,0 +1,12 @@
+[Unit]
+Description=Stock Market Analysis
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/kpi/backend
+ExecStart=minikube kubectl -- -n production port-forward --address=0.0.0.0 services/stock-prod-svc 8000:8080  
+User=volkan
+Group=volkan
+
+[Install]
+WantedBy=multi-user.target 

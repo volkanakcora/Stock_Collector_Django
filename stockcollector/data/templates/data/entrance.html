@@ -1,9 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Welcome to the Stock Analytics Website!</h1>
-  <p>Explore the available tools and data:</p>
-  <ul>
-    <li><a href="{% url 'daily_change' %}">View Sorted Stock Data</a></li>
-    </ul>
+  <header style="background-color: #f0f0f0; padding: 1em; text-align: center;">
+    <div class="container" style="width: 80%; margin: 0 auto;">
+      <h1>Welcome to the Stock Analytics Website!</h1>
+      <p>Explore the available tools and data:</p>
+      <ul style="list-style: none; padding: 0; margin: 0;">
+        <li style="display: inline-block; margin-right: 1em;"><a href="{% url 'daily_change' %}" style="color: #333; text-decoration: none;">View Sorted Stock Data based on last 1 weeks change</a></li>
+      </ul>
+    </div>
+  </header>
 {% endblock %}

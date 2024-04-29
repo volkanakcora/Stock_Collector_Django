@@ -24,12 +24,9 @@ class stock_analytics(AppConfig):
 
         # Create a pandas dataframe from the list of dictionaries
         df = pd.DataFrame(stock_data)
-        print(df)
         # send the data
         data_to_be_Sent = micro_functions.daily_screen(df)
-        print(data_to_be_Sent)
         functions.send_email(self, data_to_be_Sent, settings.EMAILS['default']['1'])
-        functions.send_email(self, data_to_be_Sent, settings.EMAILS['default']['2'])
 
         # Prepare plot
         # Calculate the price change percentage for each ticker
@@ -49,7 +46,9 @@ class stock_analytics(AppConfig):
         # Filter the DataFrame for the last 4 months
         filtered_df = filtered_df[filtered_df['date'] >= four_months_ago]
         # List of unique tickers
+        print(filtered_df)
         tickers = filtered_df['stock_name'].unique()
+        print(tickers)
         # Define the number of rows and columns for the grid
         n_rows = len(tickers)  # You can adjust this based on the number of tickers
         n_cols = 3  # You can adjust this based on the number of tickers
@@ -78,12 +77,14 @@ class stock_analytics(AppConfig):
         # Remove any empty subplots
         for i in range(len(tickers), n_rows * n_cols):
             fig.delaxes(axes.flatten()[i])
+        
+        plt.savefig('stock_prices.png')
+
 
         # Adjust layout for better spacing
         plt.tight_layout()
         # send the plots
         functions.send_image(self, plt, settings.EMAILS['default']['1'])
-        functions.send_image(self, plt, settings.EMAILS['default']['2'])
 
 
 

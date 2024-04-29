@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ app_name }} - Home</title>
+</head>
+<body style="font-family: Arial, sans-serif; margin: 5; padding: 10;">
+  <header style="background-color: #f0f0f0; padding: 1em;">
+    <div class="container" style="width: 80%; margin: 0 auto;">
+      <h1>Welcome to {{ app_name }}</h1>
+      <nav>
+        <ul style="list-style: none; padding: 1; margin: 0;">
+          {% for link in links %}
+            <li style="display: inline-block; padding: 0.5em 1em;  /* Add padding for spacing */
+                       border: 1px solid #ccc; /* Add a border */
+                       border-radius: 5px; /* Add rounded corners */
+                       background-color: #eee; /* Light background color */">  <a href="{{ link.url }}" style="color: #333; text-decoration: none;">{{ link.name }}</a>  </li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" style="background-image: url('https://www.investopedia.com/thmb/1YepRlCFPZlwBYbMF3h2x9vRGeM=/2120x1414/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-1058454392-85c8277555c6451d9cf79b5b26ca58ab.jpg'); background-size: cover; background-position: center; height: 900px;">
+    </section>
+  </main>
+
+  <footer style="background-color: #eee; padding: 1em; text-align: center;">
+    <div class="container">
+    </div>
+  </footer>
+</body>
+</html>

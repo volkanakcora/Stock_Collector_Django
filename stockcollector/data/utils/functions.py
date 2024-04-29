@@ -30,7 +30,7 @@ def get_day_of_the_month():
 def get_yesterday():
     today = get_day_of_the_month()
     # Yesterday date
-    yesterday = today - timedelta(days=1)
+    yesterday = today - timedelta(days=7)
     return yesterday
 
 

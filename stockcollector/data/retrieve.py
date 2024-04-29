@@ -16,7 +16,7 @@ class stocks(AppConfig):
     def run(self):
         time = datetime.datetime.now()
         print('hello world:[{}]'.format(time))
-        startDate = '2023-01-01'
+        startDate = '2023-02-01'
         endDate = get_day_of_the_month()
         company = []
         stock_data = pd.DataFrame()

@@ -4,12 +4,11 @@ metadata:
   name: stock-prod-svc
   namespace: production
   labels:
-    tier: production
     app: stockcollector
 spec:
+  type: NodePort
   selector:
-    tier: production
     app: stockcollector
   ports:
-    - port: 80 # The port on which the service will be exposed
+    - port: 8080 # The port on which the service will be exposed
       targetPort: 9091 # The port to which traffic will be forwarded inside the pod

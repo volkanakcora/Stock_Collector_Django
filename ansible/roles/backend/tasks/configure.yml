@@ -1,14 +1,28 @@
-- name: Deploy sql  scripts
-  copy:
-    src: "{{ sql_scripts }}"
-    dest: "{{ backend_path }}/SQL/"
-    owner: "{{ backend_user }}"
-    group: "{{ backend_user }}"
-
-
 - name: Deploy kubernetes  scripts
   copy:
     src: "{{ kubernetes_script }}"
     dest: "{{ backend_path }}/Kubernetes/"
     owner: "{{ backend_user }}"
     group: "{{ backend_user }}"
+
+- name: Check for production namespace
+  register: namespace_exists
+  become: true
+  become_user: volkan
+  shell: "minikube kubectl -- create namespace production"
+  ignore_errors: true
+
+- name: Deploy systemd service
+  become: true
+  become_user: root
+  copy:
+    src: "{{ systemd_stock }}"
+    dest: "{{ systemd_dest }}"
+    owner: "{{ backend_user }}"
+    group: "{{ backend_user }}"
+
+- name: Reload systemd configuration
+  become: true
+  become_user: root
+  command: systemctl daemon-reload
+

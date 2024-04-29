@@ -2,9 +2,6 @@ FROM python:3.8
 LABEL author=VolkanAkcora
 LABEL "application_environment"="Production"
 LABEL "version"=1.0
-ENV HTTPS_PROXY=http://webproxy.deutsche-boerse.de:8080
-ENV HTTP_PROXY=http://webproxy.deutsche-boerse.de:8080
-ENV http_proxy=http://webproxy.deutsche-boerse.de:8080
 WORKDIR /usr/src/app
 COPY ansible/roles/backend/files/stock_collector-1.0.0-py3-none-any.whl .
 COPY script.sh .

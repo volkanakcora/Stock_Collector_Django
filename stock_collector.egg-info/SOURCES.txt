@@ -31,4 +31,5 @@ stockcollector/stockcollector/asgi.py
 stockcollector/stockcollector/operator.py
 stockcollector/stockcollector/settings.py
 stockcollector/stockcollector/urls.py
+stockcollector/stockcollector/views.py
 stockcollector/stockcollector/wsgi.py

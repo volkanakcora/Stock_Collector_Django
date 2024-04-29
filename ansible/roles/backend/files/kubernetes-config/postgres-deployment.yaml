@@ -30,10 +30,3 @@ spec:
               value: stock # Matches your Django config
             - name: POSTGRES_PASSWORD
               value: "2cNUVfN~Fp`2Zzh3EV2rcV49&~^Ev4y%%" # Matches your Django config (place in quotes)
-      nodeSelector:
-        tier: production
-      tolerations:
-        - key: "tier"
-          operator: "Equal"
-          value: "production"
-          effect: "NoSchedule"
