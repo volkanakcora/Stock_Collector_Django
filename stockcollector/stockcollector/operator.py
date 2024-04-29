@@ -22,5 +22,4 @@ def start():
         email_app = apps.get_app_config('data')  # Get the app config
         email_obj = stock_analytics(email_app.name, email_app.module)
         email_obj.run()
-    send_email()
     scheduler.start()
