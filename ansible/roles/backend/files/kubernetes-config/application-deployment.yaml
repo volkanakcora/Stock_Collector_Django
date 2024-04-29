@@ -6,7 +6,7 @@ metadata:
   labels:
     app: stockcollector
 spec:
-  replicas: 1 # Adjust the number of replicas as needed
+  replicas: 1
   selector:
     matchLabels:
       app: stockcollector

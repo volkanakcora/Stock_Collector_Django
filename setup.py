@@ -13,7 +13,6 @@ except Exception:
 
 requirements = [
     "alabaster",
-    "alembic==1.13.1",
     "appdirs==1.4.4",
     "APScheduler==3.8.1",
     "argh==0.31.2",

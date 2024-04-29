@@ -28,8 +28,7 @@ class stocks(AppConfig):
         #     # Fetch data using get_stock_prices
               data = get_stock_prices(startDate, endDate, companies)
               stock_data = pd.concat([stock_data, data])
-        print(data)
-        print(stock_data)    
+  
         # Process and calculate values
         stock_data.reset_index(drop=True, inplace=True)  # Update in-place
         stock_data['count'] = stock_data.index
