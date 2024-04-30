@@ -20,6 +20,7 @@ stockcollector/data/migrations/0002_alter_stock_adjusted_close_alter_stock_close
 stockcollector/data/migrations/__init__.py
 stockcollector/data/templates/__init__.py
 stockcollector/data/templates/base.html
+stockcollector/data/templates/home.html
 stockcollector/data/templates/data/__init__.py
 stockcollector/data/templates/data/daily_change.html
 stockcollector/data/templates/data/entrance.html

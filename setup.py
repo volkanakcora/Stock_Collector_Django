@@ -97,7 +97,7 @@ requirements = [
     "XlsxWriter==3.2.0",
     "yfinance==0.1.70",
     "zipp==3.18.1",
-    "matplotlib==3.7.4"
+    "matplotlib==3.7",
 ]
 
 setup(

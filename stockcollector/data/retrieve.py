@@ -1,21 +1,27 @@
 from django.shortcuts import render
 import datetime
 from .models import Stock
-from .utils.functions import get_day_of_the_month, get_stock_prices, get_yesterday
+from .utils.functions import get_day_of_the_month, get_stock_prices
 from .utils.micro_macro_functions import micro_functions
 import pandas as pd 
 from django.conf import settings
 from django.apps import AppConfig 
 from .apps import AppConfig
 from .models import Stock
-
+import logging
 class stocks(AppConfig):
     def __init__(self, app_name: str, app_module: None) -> None:
         super().__init__(app_name, app_module)
 
     def run(self):
+        try:
+            self.retrieve_data()
+        except Exception:
+            logging.warn("WARN: Process failed")
+
+    def retrieve_data():
         time = datetime.datetime.now()
-        print('hello world:[{}]'.format(time))
+        print('Stock Data collection has started:[{}]'.format(time))
         startDate = '2023-02-01'
         endDate = get_day_of_the_month()
         company = []
@@ -23,6 +29,7 @@ class stocks(AppConfig):
 
         for key, value in settings.COMPANIES['default'].items():
             company.append(value)
+        print(company)
 
         for companies in company:
         #     # Fetch data using get_stock_prices
@@ -53,5 +60,4 @@ class stocks(AppConfig):
                 expected_change=row['exp_change'],
             ) for _, row in stock_data.iterrows()
         ])
-    # except Exception as e:  # Catch specific exceptions (e.g., ConnectionError)
-    #     print(f"Error retrieving data: {e}")
+        

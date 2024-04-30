@@ -6,14 +6,18 @@ from django.apps import AppConfig
 from .utils import functions
 from .utils.micro_macro_functions import micro_functions
 from .models import Stock
+import logging
 
 class stock_analytics(AppConfig):
     def __init__(self, app_name: str, app_module: None) -> None:
         super().__init__(app_name, app_module)
 
     def run(self):
-        self.send_analytics()
-
+        try:
+            self.send_analytics()
+        except Exception:
+            logging.warn("Process Failed")
+        
     def send_analytics(self):     
 
         # Query all data from the Stock model using Django ORM

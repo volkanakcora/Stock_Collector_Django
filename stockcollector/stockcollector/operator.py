@@ -16,7 +16,7 @@ def start():
         stocks_obj = stocks(stocks_app.name, stocks_app.module)
         stocks_obj.run()
     
-    @scheduler.scheduled_job('interval', hours=14, name='send_email')
+    @scheduler.scheduled_job('interval', hours=13, name='send_email')
     def send_email():
         from django.apps import apps  # Import apps module
         email_app = apps.get_app_config('data')  # Get the app config
