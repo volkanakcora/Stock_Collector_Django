@@ -9,17 +9,18 @@ def start():
     scheduler.add_jobstore(DjangoJobStore(), 'djangojobstore')
     register_events(scheduler)
 
-    @scheduler.scheduled_job('interval', hours=10, name='retrieve_data')
+    @scheduler.scheduled_job('interval', hours=24, name='retrieve_data')
     def retrieve_data():
         from django.apps import apps  # Import apps module
         stocks_app = apps.get_app_config('data')  # Get the app config
         stocks_obj = stocks(stocks_app.name, stocks_app.module)
         stocks_obj.run()
     
-    @scheduler.scheduled_job('interval', hours=13, name='send_email')
+    @scheduler.scheduled_job('interval', hours=27, name='send_email')
     def send_email():
         from django.apps import apps  # Import apps module
         email_app = apps.get_app_config('data')  # Get the app config
         email_obj = stock_analytics(email_app.name, email_app.module)
         email_obj.run()
+    retrieve_data()
     scheduler.start()
