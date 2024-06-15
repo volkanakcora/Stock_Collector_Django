@@ -1,4 +1,5 @@
 - name: Deploy backend
   hosts: all
+  ignore_errors: true
   roles:
     - backend_stock_collector
