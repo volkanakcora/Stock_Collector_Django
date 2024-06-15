@@ -10,6 +10,10 @@
   import_tasks: install.yml
   tags: install
 
+- name: Migrate Databas
+  import_tasks: migrate_database.yaml
+  tags: migrate_db
+
 - name: Configure
   import_tasks: configure.yml
   tags: configure

@@ -31,7 +31,7 @@ class stock_analytics(AppConfig):
         # send the data
         data_to_be_Sent = micro_functions.daily_screen(df)
         functions.send_email(self, data_to_be_Sent, settings.EMAILS['default']['1'])
-
+        logging.info('Email has been sent successfully')
         # Prepare plot
         # Calculate the price change percentage for each ticker
         ticker_performance = df.groupby('stock_name').apply(
@@ -50,9 +50,7 @@ class stock_analytics(AppConfig):
         # Filter the DataFrame for the last 4 months
         filtered_df = filtered_df[filtered_df['date'] >= four_months_ago]
         # List of unique tickers
-        print(filtered_df)
         tickers = filtered_df['stock_name'].unique()
-        print(tickers)
         # Define the number of rows and columns for the grid
         n_rows = len(tickers)  # You can adjust this based on the number of tickers
         n_cols = 3  # You can adjust this based on the number of tickers
@@ -89,6 +87,8 @@ class stock_analytics(AppConfig):
         plt.tight_layout()
         # send the plots
         functions.send_image(self, plt, settings.EMAILS['default']['1'])
+        logging.info('Graph has been sent successfully')
+
 
 
 

@@ -9,3 +9,11 @@ backend_path: "/opt/kpi/backend"
 kubernetes_script: "files/kubernetes-config"
 systemd_stock: "kpistock.service.j2"
 systemd_dest: "/etc/systemd/system/kpistock.service"
+backend_wheel_local_src_path: "files/stock_collectors-1.0.0-py3-none-any.whl"
+backend_wheel_dest_path: "{{ backend_path }}/stock_collectors-1.0.0-py3-none-any.whl"
+
+
+# Systemd unit
+backend_systemd_unit: "stockcollector.service"
+backend_systemd_unit_src: "stockcollector.service.j2"
+backend_systemd_unit_path: "/etc/systemd/system/stockcollector.service"

@@ -7,7 +7,6 @@ resources:
   - application-deployment.yaml
   - pvc.yaml 
   - service.yaml
-  - stock-ingress.yaml
 
 commonLabels:
   app.kubernetes.io/name: stockcollector

@@ -1,0 +1,63 @@
+- name: Install python requires
+  become: yes
+  become_user: root
+  dnf:
+    name:
+      - python39
+      - python39-pip
+      - python3-virtualenv
+      - python39-devel
+    state: present
+
+- name: Create backend folder
+  file:
+    path: "{{ backend_path }}"
+    state: directory
+    owner: "{{ backend_user }}"
+    group: "{{ backend_user }}"
+
+- name: Create virtual environment
+  command: "python3.9 -m venv {{ backend_venv_path }}"
+  args:
+    creates: "{{ backend_venv_path }}/bin/activate"
+
+- name: Install base packages in the virtual environment
+  pip:
+    name:
+      - pip
+      - setuptools
+      - wheel
+    state: latest
+    virtualenv: "{{ backend_venv_path }}"
+
+- name: Copy backend wheel to remote
+  copy:
+    src: "{{ backend_wheel_local_src_path }}"
+    dest: "{{ backend_wheel_dest_path }}"
+    owner: "{{ backend_user }}"
+    group: "{{ backend_user }}"
+
+- name: Install backend with pip
+  pip:
+    name: "{{ backend_wheel_dest_path }}"
+    state: forcereinstall
+    virtualenv: "{{ backend_venv_path }}"
+
+- name: Deploy systemd unit
+  become: true
+  become_user: root
+  template:
+    src: "{{ backend_systemd_unit_src }}"
+    dest: "{{ backend_systemd_unit_path }}"
+    owner: root
+    group: root
+  register: deploy_unit
+
+- name: Reload systemd daemon
+  become: true
+  become_user: root
+  systemd:
+    name: "{{ backend_systemd_unit }}"
+    enabled: true
+    daemon_reload: true
+  when: deploy_unit.changed

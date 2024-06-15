@@ -5,6 +5,6 @@
 
 - name: Start systemd service
   systemd:
-    name: "kpistock.service"
+    name: "{{ backend_systemd_unit }}"
     state: started
   become: true
