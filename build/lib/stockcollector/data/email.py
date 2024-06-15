@@ -6,14 +6,18 @@ from django.apps import AppConfig
 from .utils import functions
 from .utils.micro_macro_functions import micro_functions
 from .models import Stock
+import logging
 
 class stock_analytics(AppConfig):
     def __init__(self, app_name: str, app_module: None) -> None:
         super().__init__(app_name, app_module)
 
     def run(self):
-        self.send_analytics()
-
+        try:
+            self.send_analytics()
+        except Exception:
+            logging.warn("Process Failed")
+        
     def send_analytics(self):     
 
         # Query all data from the Stock model using Django ORM
@@ -24,13 +28,10 @@ class stock_analytics(AppConfig):
 
         # Create a pandas dataframe from the list of dictionaries
         df = pd.DataFrame(stock_data)
-        print(df)
         # send the data
         data_to_be_Sent = micro_functions.daily_screen(df)
-        print(data_to_be_Sent)
         functions.send_email(self, data_to_be_Sent, settings.EMAILS['default']['1'])
-        functions.send_email(self, data_to_be_Sent, settings.EMAILS['default']['2'])
-
+        logging.info('Email has been sent successfully')
         # Prepare plot
         # Calculate the price change percentage for each ticker
         ticker_performance = df.groupby('stock_name').apply(
@@ -78,12 +79,16 @@ class stock_analytics(AppConfig):
         # Remove any empty subplots
         for i in range(len(tickers), n_rows * n_cols):
             fig.delaxes(axes.flatten()[i])
+        
+        plt.savefig('stock_prices.png')
+
 
         # Adjust layout for better spacing
         plt.tight_layout()
         # send the plots
         functions.send_image(self, plt, settings.EMAILS['default']['1'])
-        functions.send_image(self, plt, settings.EMAILS['default']['2'])
+        logging.info('Graph has been sent successfully')
+
 
 
 

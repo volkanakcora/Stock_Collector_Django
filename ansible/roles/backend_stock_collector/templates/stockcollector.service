@@ -5,7 +5,7 @@ After=network.target
 [Service]
 WorkingDirectory={{ backend_path }}
 Environment="{{ backend_path }}/venv/bin/activate"
-ExecStart={{ backend_venv_path }}/bin/stock_collector {{ backend_config_path }}
+ExecStart={{ backend_venv_path }}/bin/stock_collector runserver 0.0.0.0:8000 --noreload
 User={{ backend_user }}
 Group={{ backend_user }}
 

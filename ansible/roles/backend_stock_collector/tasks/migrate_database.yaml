@@ -2,12 +2,12 @@
   block:
     - name: Make Migrations Database
       command: 
-        cmd: "{{ backend_venv_path }}/bin/stockcollector makemigrations"
+        cmd: "{{ backend_path }}/venv/bin/stock_collector makemigrations"
         chdir: "{{ backend_path }}"
       register: makemigration_result
     
     - name: Migrate Database
       command: 
-        cmd: "{{ backend_venv_path }}/bin/stockcollector migrate"
+        cmd: "{{ backend_path }}/venv/bin/stock_collector migrate"
         chdir: "{{ backend_path }}"
       register: migration_result

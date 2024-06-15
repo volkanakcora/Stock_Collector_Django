@@ -10,13 +10,13 @@
   import_tasks: install.yml
   tags: install
 
+- name: Configure SYstemD backend
+  import_tasks: configure.yaml
+  tags: configure
+
 - name: Migrate Databas
   import_tasks: migrate_database.yaml
   tags: migrate_db
-
-- name: Configure
-  import_tasks: configure.yml
-  tags: configure
 
 - name: Start backend
   import_tasks: start.yml

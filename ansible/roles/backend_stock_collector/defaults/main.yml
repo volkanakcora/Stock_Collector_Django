@@ -1,7 +1,7 @@
 backend_user: "volkan"
 backend_path: "/opt/kpi/backend"
 backend_venv_path: "{{ backend_path }}/venv"
-
+backend_config_path: "{{ backend_path }}"
 # Package src and dest
 # NOTE: Github auth required to download wheel. So for now just expexting a the wheel to be in energy.statuspage/ansible/playbooks/files/energy_status_page.whl
 #backend_wheel_url: "https://github.deutsche-boerse.de/dev/energy.statuspage/releases/download/v0.1.1/energy_status_page-0.1.1-py3-none-any.whl
@@ -16,5 +16,5 @@ backend_wheel_dest_path: "{{ backend_path }}/stock_collector-1.0.0-py3-none-any.
 
 # Systemd unit
 backend_systemd_unit: "stockcollector.service"
-backend_systemd_unit_src: "stockcollector.service.j2"
+backend_systemd_unit_src: "stockcollector.service"
 backend_systemd_unit_path: "/etc/systemd/system/stockcollector.service"

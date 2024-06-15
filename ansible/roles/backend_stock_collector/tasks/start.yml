@@ -1,8 +1,3 @@
-- name: Start backend
-  become: true
-  become_user: volkan
-  shell: "minikube kubectl -- apply -k {{ backend_path }}/Kubernetes/kubernetes-config"
-
 - name: Start systemd service
   systemd:
     name: "{{ backend_systemd_unit }}"
