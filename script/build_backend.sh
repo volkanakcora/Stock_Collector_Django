@@ -55,18 +55,18 @@ log "Copy wheels to: ../ansible/playbooks/files/"
 cp dist/*.whl ansible/roles/backend/files/
 log "######################################################### NEW BUILD CREATED, AND COPIED TO ANSIBLE FILES DIRECTORY IN ORDER TO BE DEPLOYED   ################################################"
 
-# log in to docker
-docker login --username volkan.akcora@gmail.com --password hlktvurkxllu996 docker.io
+# # log in to docker
+# docker login --username volkan.akcora@gmail.com --password hlktvurkxllu996 docker.io
 
-# clean the current images
-#docker rmi all --force
+# # clean the current images
+# #docker rmi all --force
 
-# run docker file to build a new image
-docker build -t stockcollector -f docker --no-cache .
+# # run docker file to build a new image
+# docker build -t stockcollector -f docker --no-cache .
 
 
-#tag the docker image
-docker tag stockcollector volkanakcora96/stock_collector:latest
+# #tag the docker image
+# docker tag stockcollector volkanakcora96/stock_collector:latest
 
-#push the image to the docker hub
-docker push volkanakcora96/stock_collector:latest
+# #push the image to the docker hub
+# docker push volkanakcora96/stock_collector:latest
