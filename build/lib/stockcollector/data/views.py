@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import Stock
+from .models import StockBST
 # Create your views here.
 from django.http import HttpResponse
 from django.views import generic  

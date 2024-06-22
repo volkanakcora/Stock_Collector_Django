@@ -5,11 +5,10 @@ import matplotlib.pyplot as plt
 from django.apps import AppConfig 
 from .utils import functions
 from .utils.micro_macro_functions import micro_functions
-from .models import Stock
+from .models import StockBST
 import logging
-from io import BytesIO
 
-class stock_analytics(AppConfig):
+class stock_analytics_bist(AppConfig):
     def __init__(self, app_name: str, app_module: None) -> None:
         super().__init__(app_name, app_module)
 
@@ -21,7 +20,7 @@ class stock_analytics(AppConfig):
         
     def send_analytics(self):
         try:
-            stocks = Stock.objects.all()
+            stocks = StockBST.objects.all()
 
             stock_data = [stock.__dict__ for stock in stocks]
 
@@ -30,14 +29,13 @@ class stock_analytics(AppConfig):
 
             #sending part:
             functions.send_csv(data_to_be_sent, caption='Analytics Report')
-            functions.send_message('Data succesfully sent')
-            logging.info('CSV sent successfully to Telegram')
+            functions.send_message('BIST Data succesfully sent')
+            logging.info('BIST CSV sent successfully to Telegram')
 
         except Exception as e:
             logging.error(f'Failed to send CSV: {str(e)}')
  
         try:
-            # Calculate the performance of each ticker
             ticker_performance = df.groupby('stock_name').apply(
                 lambda x: (x['close_price'].iloc[-1] - x['close_price'].iloc[0]) / x['close_price'].iloc[0] * 100
             ).sort_values(ascending=False)
@@ -45,14 +43,12 @@ class stock_analytics(AppConfig):
             top_tickers = ticker_performance.head(20).index
             filtered_df = df[df['stock_name'].isin(top_tickers)]
             
-            n_rows = len(top_tickers)  # You can adjust this based on the number of tickers
-            n_cols = 3  # You can adjust this based on the number of tickers
+            n_rows = len(top_tickers)  
+            n_cols = 3  
 
-            # Define number of rows and columns for the grid
-            n_rows = (len(top_tickers) + n_cols - 1) // n_cols  # Calculate rows needed
+            n_rows = (len(top_tickers) + n_cols - 1) // n_cols  
 
-            # Create figure and axes
-            fig, axes = plt.subplots(n_rows, n_cols, figsize=(15, 5 * n_rows))  # Adjust figure size for better readability
+            fig, axes = plt.subplots(n_rows, n_cols, figsize=(15, 5 * n_rows)) 
 
             for i, ticker in enumerate(top_tickers):
                 row = i // n_cols
@@ -61,7 +57,7 @@ class stock_analytics(AppConfig):
 
                 subset = filtered_df[filtered_df['stock_name'] == ticker]
                 ax.plot(subset['date'], subset['close_price'])
-                ax.set_title(f'Stock Prices for {ticker}', fontsize=14, fontweight='bold')
+                ax.set_title(f'BIST Stock Prices for {ticker}', fontsize=14, fontweight='bold')
                 ax.set_xlabel('Date', fontsize=12, fontweight='bold')
                 ax.set_ylabel('Close Price', fontsize=12, fontweight='bold')
 
@@ -70,18 +66,16 @@ class stock_analytics(AppConfig):
                 ax.text(subset['date'].iloc[-1], subset['close_price'].iloc[-1], f'{subset["close_price"].iloc[-1]:.2f}', fontsize=10,
                         ha='center', va='bottom', fontweight='bold')
 
-            # Remove any empty subplots
             for i in range(len(top_tickers), n_rows * n_cols):
                 fig.delaxes(axes.flatten()[i])
 
             plt.tight_layout()
 
-            # Send the image
-            functions.send_png(plt, caption='Top 20 Ticker Performance')
-            logging.info('Plot sent successfully to Telegram')
+            functions.send_png(plt, caption='BIST Top 20 Ticker Performance')
+            logging.info('BIST Plot sent successfully to Telegram')
 
         except Exception as e:
-            logging.error(f'Failed to send plot: {str(e)}')
+            logging.error(f'BIST Failed to send plot: {str(e)}')
 
 
 

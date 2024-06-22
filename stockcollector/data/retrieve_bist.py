@@ -1,13 +1,13 @@
 import datetime
 import pandas as pd
 from django.conf import settings
-from .models import Stock
+from .models import StockBST
 from .utils.micro_macro_functions import micro_functions
 from .utils.functions import get_stock_prices, get_day_of_the_month, get_yesterday
 import logging
 from django.apps import AppConfig 
 
-class Stocks(AppConfig):
+class StocksBST(AppConfig):
     def __init__(self, app_name: str, app_module: None) -> None:
         super().__init__(app_name, app_module)
 
@@ -24,7 +24,7 @@ class Stocks(AppConfig):
         start_date = "2023-02-01"
         end_date = current_date.strftime("%Y-%m-%d")  # Use today's date for end date
 
-        companies = list(settings.COMPANIES["default"].values())
+        companies = list(settings.COMPANIES_BIST["default"].values())
 
         stock_data = pd.DataFrame()
 
@@ -37,13 +37,13 @@ class Stocks(AppConfig):
         micro_functions.calc_vol(stock_data)
 
          # Check for existing data in database
-        existing_entries = Stock.objects.values_list('stock_name', 'date')
+        existing_entries = StockBST.objects.values_list('stock_name', 'date')
         existing_entries = set(existing_entries)
 
         new_entries = []
         for _, row in stock_data.iterrows():
             if (row["ticker"], row["Date"]) not in existing_entries:
-                new_entry = Stock(
+                new_entry = StockBST(
                     date=row["Date"],
                     open_price=row["Open"],
                     high_price=row["High"],
@@ -61,6 +61,6 @@ class Stocks(AppConfig):
 
         # Bulk create new entries
         logging.info(new_entries)
-        Stock.objects.bulk_create(new_entries)
+        StockBST.objects.bulk_create(new_entries)
 
         print("Stock data updated successfully.")

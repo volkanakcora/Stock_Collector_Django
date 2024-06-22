@@ -4,6 +4,7 @@ import os
 import sys
 import time 
 from django.conf import settings
+import asyncio
 
 def main():
     """Run administrative tasks."""
@@ -20,4 +21,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())
