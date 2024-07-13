@@ -7,6 +7,8 @@ from .utils import functions
 from .utils.micro_macro_functions import micro_functions
 from .models import Stock
 import logging
+import datetime
+
 
 class stock_analytics(AppConfig):
     def __init__(self, app_name: str, app_module: None) -> None:
@@ -20,7 +22,8 @@ class stock_analytics(AppConfig):
         
     def send_analytics(self):
         try:
-            stocks = Stock.objects.all()
+            six_months_ago = datetime.date.today() - datetime.timedelta(days=6*30)
+            stocks =  Stock.objects.filter(date__gte=six_months_ago)
 
             stock_data = [stock.__dict__ for stock in stocks]
 
@@ -48,7 +51,7 @@ class stock_analytics(AppConfig):
 
             n_rows = (len(top_tickers) + n_cols - 1) // n_cols  
 
-            fig, axes = plt.subplots(n_rows, n_cols, figsize=(15, 5 * n_rows)) 
+            fig, axes = plt.subplots(n_rows, n_cols, figsize=(20, 5 * n_rows)) 
 
             for i, ticker in enumerate(top_tickers):
                 row = i // n_cols
@@ -60,6 +63,9 @@ class stock_analytics(AppConfig):
                 ax.set_title(f'Stock Prices for {ticker}', fontsize=14, fontweight='bold')
                 ax.set_xlabel('Date', fontsize=12, fontweight='bold')
                 ax.set_ylabel('Close Price', fontsize=12, fontweight='bold')
+                
+                # Format date on x-axis (adjust as needed)
+                ax.xaxis.set_major_formatter(plt.matplotlib.dates.DateFormatter('%Y-%m-%d'))
 
                 ax.text(subset['date'].iloc[0], subset['close_price'].iloc[0], f'{subset["close_price"].iloc[0]:.2f}', fontsize=10,
                         ha='center', va='bottom', fontweight='bold')
@@ -70,9 +76,10 @@ class stock_analytics(AppConfig):
                 fig.delaxes(axes.flatten()[i])
 
             plt.tight_layout()
-
-            functions.send_png(plt, caption='Top 20 Ticker Performance')
-            logging.info('Plot sent successfully to Telegram')
+            
+            
+            functions.send_png(plt, caption='Foreign Top 20 Ticker Performance')
+            logging.info('Foreign Stock Plot sent successfully to Telegram')
 
         except Exception as e:
             logging.error(f'Failed to send plot: {str(e)}')

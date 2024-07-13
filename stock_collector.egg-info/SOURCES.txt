@@ -10,6 +10,8 @@ stockcollector/manage.py
 stockcollector/data/__init__.py
 stockcollector/data/admin.py
 stockcollector/data/apps.py
+stockcollector/data/bist_ML.py
+stockcollector/data/foreign_ML.py
 stockcollector/data/models.py
 stockcollector/data/retrieve_bist.py
 stockcollector/data/retrieve_foreign.py

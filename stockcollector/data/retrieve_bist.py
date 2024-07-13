@@ -21,7 +21,7 @@ class StocksBST(AppConfig):
         current_date = datetime.datetime.now()
         print(f"Stock Data collection has started: [{current_date}]")
 
-        start_date = "2023-02-01"
+        start_date = "2022-01-01"
         end_date = current_date.strftime("%Y-%m-%d")  # Use today's date for end date
 
         companies = list(settings.COMPANIES_BIST["default"].values())

@@ -47,7 +47,7 @@ requirements = [
     "multitasking==0.0.11",
     "mypy-extensions==1.0.0",
     "nh3==0.2.15",
-    "numpy==1.21.0",
+    "numpy==1.22.4",
     "oauthlib==3.2.2",
     "packaging==24.0",
     "pandas==1.1.5",
@@ -98,6 +98,8 @@ requirements = [
     "yfinance==0.1.70",
     "zipp==3.18.1",
     "matplotlib==3.7",
+    "scikit-learn",
+    "scipy",
 ]
 
 setup(

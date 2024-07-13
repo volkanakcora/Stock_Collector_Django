@@ -17,6 +17,16 @@ class micro_functions:
         df['magnitude'] = (df.change / df.exp_change).round(2)
         df['abs_magnitude'] = np.abs(df.magnitude)
         df.dropna(inplace= True)
+    
+    def calc_vol_for_ml(df):
+        df['returns'] = np.log(df.close_price).diff().round(4)
+        df['volatility'] = df.returns.rolling(21).std().round(4)
+        df['change'] = df['close_price'].diff()
+        df['hi_low_spread'] = ((df['High'] - df['Low']) / df['Open']).round(2)
+        df['exp_change'] = (df.volatility * df.close_price.shift(1)).round(2)
+        df['magnitude'] = (df.change / df.exp_change).round(2)
+        df['abs_magnitude'] = np.abs(df.magnitude)
+        df.dropna(inplace= True)
 
     def daily_screen(df):
         df = df[df['date'] == str(get_yesterday())]
