@@ -8,19 +8,16 @@ import io
 from email.mime.image import MIMEImage
 import requests
 from io import BytesIO
+import matplotlib.pyplot as plt
+import logging
 
 def get_stock_prices(startDate, endDate, ticker):
-    # downloading the data of the ticker value between
-    # the start and end dates
+
     resultData = yf.download(ticker, startDate, endDate)
-    # Setting date as index
     resultData["Date"] = resultData.index
-    # Giving column names
     resultData = resultData[["Open", "High", "Low", "Close", "Volume", "Date"]]
     resultData["ticker"] = ticker
-    # Resetting the index values
-    # resultData.reset_index(drop=True, inplace=True)
-    # getting the first 5 rows of the data
+
     return resultData
 
 
@@ -34,7 +31,6 @@ def get_yesterday():
     yesterday = today - timedelta(days=2)
     return yesterday
 
-#Outdated, just keeping it here maybe we can use it another time again
 def send_email(self, message_to_you, receipt):
 
     message = MIMEMultipart()
@@ -57,7 +53,6 @@ def send_email(self, message_to_you, receipt):
 
     print("Email sent successfully.")
 
-#keeping here maybe we use it in the future, but it's outdated
 def send_image(self, plt, receipt):
     buffer = io.BytesIO()
     plt.savefig(buffer, format="png")  
@@ -120,11 +115,39 @@ def send_png(fig, caption=''):
 
     return response.json()
 
+def send_png_tg(fig, caption=''):
+    try:
+        url = f'https://api.telegram.org/bot{TOKEN}/sendPhoto'
+        buffer = BytesIO()
+        fig.savefig(buffer, format='png')
+        buffer.seek(0)
+
+        files = {
+            'photo': ('plot.png', buffer, 'image/png')
+        }
+
+        payload = {
+            'chat_id': CHAT_ID,
+            'caption': caption
+        }
+
+        response = requests.post(url, params=payload, files=files)
+        response.raise_for_status()
+        logging.info('Image sent to Telegram successfully.')
+        
+        return response.json()
+
+    except requests.exceptions.RequestException as e:
+        logging.error(f'Request error: {e}')
+    except Exception as e:
+        logging.error(f'Error sending image to Telegram: {e}')
+
+    return None
+
 
 def send_csv(message_to_you, caption=''):
     url = f'https://api.telegram.org/bot{TOKEN}/sendDocument'
 
-    # convert the DataFrame to CSv
     csv_content = message_to_you.to_csv(index=False)
 
     files = {
