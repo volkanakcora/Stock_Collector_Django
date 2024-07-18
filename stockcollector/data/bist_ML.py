@@ -25,30 +25,24 @@ class StocksBSTPredict(AppConfig):
             logging.warning(f"Process failed: {str(e)}")
 
     def train_model(self):
-        # Fetch historical data from the database
         historical_data = StockBST.objects.all()
         historical_df = pd.DataFrame(list(historical_data.values()))
 
-        # Feature engineering
         features = ['open_price', 'high_price', 'low_price', 'close_price', 'volume',
                     'daily_return', 'volatility', 'daily_change', 'high_low_spread', 'expected_change']
 
-        # Define y_true based on historical data
         historical_df['y_true'] = (historical_df['close_price'].shift(-30) > historical_df['close_price'] * 1.40).astype(int)
 
         X = historical_df[features]
         y = historical_df['y_true']
 
-        # Split the data into training and test sets
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-        # Define a pipeline
         pipeline = Pipeline([
             ('scaler', StandardScaler()),
             ('classifier', RandomForestClassifier(random_state=42))
         ])
 
-        # Define the parameter distribution
         param_dist = {
             'classifier__n_estimators': [50],
             'classifier__max_depth': [None],
@@ -56,18 +50,14 @@ class StocksBSTPredict(AppConfig):
             'classifier__min_samples_leaf': [1]
         }
 
-        # Perform randomized search with cross-validation
         randomized_search = RandomizedSearchCV(pipeline, param_distributions=param_dist, n_iter=20, cv=5, scoring='f1', n_jobs=-1, random_state=42)
 
         randomized_search.fit(X_train, y_train)
 
-        # Get the best model
         self.model = randomized_search.best_estimator_
-        # Make predictions on the test set
         y_pred = self.model.predict(X_test)
 
 
-        # Calculate and log performance metrics
         accuracy = accuracy_score(y_test, y_pred)
         precision = precision_score(y_test, y_pred)
         recall = recall_score(y_test, y_pred)
@@ -82,7 +72,6 @@ class StocksBSTPredict(AppConfig):
         print("Model training completed.")
 
     def detect_pattern(self):
-        # Fetch data for the last month
         data = StockBST.objects.filter(date__gte=datetime.date.today() - datetime.timedelta(days=35))
         data_df = pd.DataFrame(list(data.values()))
 
@@ -90,58 +79,41 @@ class StocksBSTPredict(AppConfig):
             logging.info("No new data available for pattern detection.")
             return
 
-        # Process and calculate values
         data_df.reset_index(drop=True, inplace=True)
-
-        # Get unique stock names
         unique_stocks = data_df['stock_name'].unique()
-
-        # Initialize a list to hold the names of stocks likely to increase
         stocks_likely_to_increase = []
 
         for stock in unique_stocks:
             stock_data = data_df[data_df['stock_name'] == stock]
-
-            # Ensure there is enough data for prediction
             if len(stock_data) < 20:
                 continue
 
-            # Feature engineering (adjust based on your feature set)
             stock_features = stock_data[[
                 'open_price', 'high_price', 'low_price', 'close_price', 'volume',
                 'daily_return', 'volatility', 'daily_change', 'high_low_spread', 'expected_change'
             ]]
 
-            # Predict using the trained model
             predictions = self.model.predict(stock_features)
 
-            # Calculate probabilities if available
             if hasattr(self.model, 'predict_proba'):
                 predicted_probabilities = self.model.predict_proba(stock_features)[:, 1]
             else:
                 predicted_probabilities = None
 
-            # Example: Determine if any prediction indicates a 40% increase
             if predictions.sum() > 0 and predicted_probabilities is not None:
                 stocks_likely_to_increase.append({
                     'stock_name': stock,
-                    'predicted_probabilities': predicted_probabilities.mean()  # Use mean or max based on your strategy
+                    'predicted_probabilities': predicted_probabilities.mean()  
                 })
 
-        # Filter stocks based on your thresholds and sort by predicted probability
         filtered_stocks = [stock for stock in stocks_likely_to_increase if stock['predicted_probabilities'] is not None]
         filtered_stocks.sort(key=lambda x: x['predicted_probabilities'], reverse=True)
 
-        # Select top candidates for investment (e.g., top 10 stocks)
         top_candidates = [stock['stock_name'] for stock in filtered_stocks[:10]]
 
         if top_candidates:
             logging.info(f"Top stocks likely to increase by more than 40%: {top_candidates}")
             functions.send_message(f" BIST TURKEY Top stocks likely to increase by more than 40%: {top_candidates}")
-
-            # Example: Send message or notification
-            # Replace with your actual notification mechanism (e.g., email, SMS)
-            # send_notification(top_candidates)
         else:
             logging.info("No stocks are likely to increase by more than 40% in the last month.")
 

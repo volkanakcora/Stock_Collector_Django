@@ -19,11 +19,11 @@ class LastOneMonth(generic.ListView):
     def get_context_data(self, **kwargs):
         yesterday = date.today() - timedelta(days=7)
         queryset = Stock.objects.filter(date=yesterday)
-        sorted_data = queryset.order_by('-daily_change')[:50]  # Sort by daily_change descending, limit 50
+        sorted_data = queryset.order_by('-daily_change')[:50] 
         context = super(LastOneMonth, self).get_context_data(**kwargs)
         context['greetings_to'] = 'Anonymous'
         context['num_articles'] = Stock.objects.all().count()
-        context['sorted_data'] = sorted_data  # Pass the sorted queryset
+        context['sorted_data'] = sorted_data  
 
         return context
 

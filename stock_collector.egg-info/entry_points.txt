@@ -1,3 +1,0 @@
-[console_scripts]
-stock_collector = stockcollector.manage:main
-

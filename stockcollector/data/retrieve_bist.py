@@ -22,7 +22,7 @@ class StocksBST(AppConfig):
         print(f"Stock Data collection has started: [{current_date}]")
 
         start_date = "2022-01-01"
-        end_date = current_date.strftime("%Y-%m-%d")  # Use today's date for end date
+        end_date = current_date.strftime("%Y-%m-%d")  
 
         companies = list(settings.COMPANIES_BIST["default"].values())
 
@@ -36,7 +36,6 @@ class StocksBST(AppConfig):
         stock_data.reset_index(drop=True, inplace=True)
         micro_functions.calc_vol(stock_data)
 
-         # Check for existing data in database
         existing_entries = StockBST.objects.values_list('stock_name', 'date')
         existing_entries = set(existing_entries)
 
@@ -59,7 +58,7 @@ class StocksBST(AppConfig):
                 )
                 new_entries.append(new_entry)
 
-        # Bulk create new entries
+        # new entries
         logging.info(new_entries)
         StockBST.objects.bulk_create(new_entries)
 

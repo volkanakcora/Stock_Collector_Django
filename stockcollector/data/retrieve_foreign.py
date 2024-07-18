@@ -22,11 +22,11 @@ class Stocks(AppConfig):
         print(f"Stock Data collection has started: [{current_date}]")
 
         start_date = "2022-01-01"
-        end_date = current_date.strftime("%Y-%m-%d")  # Use today's date for end date
+        end_date = current_date.strftime("%Y-%m-%d")  
 
         companies = list(settings.COMPANIES["default"].values())
 
-        batch_size = 10  # Adjust the batch size according to your memory constraints
+        batch_size = 10 
         for i in range(0, len(companies), batch_size):
             batch_companies = companies[i:i + batch_size]
             self.process_batch(batch_companies, start_date, end_date)
@@ -46,7 +46,6 @@ class Stocks(AppConfig):
             except Exception as e:
                 logging.warning(f"Failed to retrieve data for company {company}: {str(e)}")
 
-        # Process and calculate values
         if stock_data.empty:
             logging.warning("No stock data to process for this batch.")
             return
@@ -54,7 +53,6 @@ class Stocks(AppConfig):
         stock_data.reset_index(drop=True, inplace=True)
         micro_functions.calc_vol(stock_data)
 
-        # Check for existing data in the database
         existing_entries = Stock.objects.values_list('stock_name', 'date')
         existing_entries = set(existing_entries)
 
@@ -77,8 +75,7 @@ class Stocks(AppConfig):
                 )
                 new_entries.append(new_entry)
 
-        # Bulk create new entries in smaller batches to prevent memory issues
-        batch_size = 1000  # Adjust this size based on your memory constraints
+        batch_size = 1000  
         for i in range(0, len(new_entries), batch_size):
             Stock.objects.bulk_create(new_entries[i:i + batch_size])
             logging.info(f"Inserted batch {i//batch_size + 1}")

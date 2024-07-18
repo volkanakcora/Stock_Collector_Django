@@ -2,8 +2,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from django_apscheduler.jobstores import DjangoJobStore, register_events
 from stockcollector.data.retrieve_foreign import Stocks
 from stockcollector.data.retrieve_bist import StocksBST
-from stockcollector.data.send_foreign import stock_analytics
-from stockcollector.data.send_bist import stock_analytics_bist
+from stockcollector.data.send_foreign_weekly import stock_analytics
+from stockcollector.data.send_bist_weekly import stock_analytics_bist
 from stockcollector.data.bist_ML import StocksBSTPredict
 from stockcollector.data.foreign_ML import StocksPredict
 from django_apscheduler import util
@@ -51,7 +51,7 @@ def start():
     # Prediction Jobs
     scheduler.add_job(
         predict_bist,
-        trigger=CronTrigger(hour=9, minute=00, day_of_week='mon'),
+        trigger=CronTrigger(hour=10, minute=00, day_of_week='mon'),
         name='precit_data_bist',
         id='predict_data_job_bist',
         replace_existing=True,
@@ -59,7 +59,7 @@ def start():
 
     scheduler.add_job(
         predict_foreign,
-        trigger=CronTrigger(hour=10, minute=30, day_of_week='mon'),
+        trigger=CronTrigger(hour=11, minute=30, day_of_week='mon'),
         name='precit_data_foreign',
         id='predict_data_job_foreign',
         replace_existing=True,
@@ -83,7 +83,7 @@ def start():
     # Notification Jobs
     scheduler.add_job(
         send_foreign,
-        trigger=CronTrigger(hour=8, minute=00),
+        trigger=CronTrigger(hour=9, minute=30, day_of_week='mon'),
         name='send_data_foreign',
         id='send_data_foreign_job',
         replace_existing=True,
@@ -91,9 +91,9 @@ def start():
 
     scheduler.add_job(
         send_bist,
-        trigger=CronTrigger(hour=8, minute=2),
-        name='send_data_foreign_bist',
-        id='send_data_foreign_bist_job',
+        trigger=CronTrigger(hour=9, minute=40, day_of_week='mon'),
+        name='send_data_bist',
+        id='send_data_bist_job',
         replace_existing=True,
     )
     

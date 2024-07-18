@@ -38,7 +38,7 @@ requirements = [
     "idna==3.6",
     "imagesize==1.4.1",
     "importlib_metadata==7.1.0",
-    "Jinja2==3.0.0",
+    "Jinja2==3.1.4",
     "jira==3.6.0",
     "lxml==5.1.0",
     "Mako==1.3.2",
@@ -98,8 +98,9 @@ requirements = [
     "yfinance==0.1.70",
     "zipp==3.18.1",
     "matplotlib==3.7",
-    "scikit-learn",
-    "scipy",
+    "scikit-learn==1.5.1",
+    "scipy==1.13.1",
+    "seaborn==0.11.2",
 ]
 
 setup(
