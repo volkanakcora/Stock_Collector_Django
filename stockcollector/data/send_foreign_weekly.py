@@ -95,7 +95,6 @@ class stock_analytics(AppConfig):
             end_date = df['date'].max()
             start_date = end_date - pd.DateOffset(months=3)
             last_3_months = df[(df['date'] >= start_date) & (df['date'] <= end_date)]
-            last_3_months['3_months_return'].to_csv('volkan.csv')
             threshold = 0
             losing_stocks = last_3_months[last_3_months['3_months_return'] < threshold]['stock_name'].unique()
             filtered_stocks = df[df['stock_name'].isin(losing_stocks)].copy()
@@ -117,7 +116,7 @@ class stock_analytics(AppConfig):
             sns.set_style("whitegrid")
             plt.rcParams.update({'font.size': 19})
 
-            fig, axes = plt.subplots(n_rows, n_cols, figsize=(18, 5 * n_rows))
+            fig, axes = plt.subplots(n_rows, n_cols, figsize=(16, 5 * n_rows))
 
             for i, ticker in enumerate(top_tickers):
                 row = i // n_cols

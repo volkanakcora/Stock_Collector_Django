@@ -14,7 +14,7 @@ class stock_analytics_bist(AppConfig):
 
     def run(self):
         try:
-            #self.send_analytics()
+            self.send_analytics()
             self.send_last_3_months()
         except Exception as e:
             logging.warn(f"Process Failed:  {str(e)}")
