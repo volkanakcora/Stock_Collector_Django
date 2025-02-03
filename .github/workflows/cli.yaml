@@ -1,0 +1,22 @@
+name: CI Workflow
+
+on:
+  push:
+    branches:
+      - main  # Adjust to the branch you want to trigger the job on
+
+jobs:
+  test:
+    runs-on: self-hosted  # This tells GitHub to use your self-hosted runner
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2  # Checkout the code to the runner's workspace
+
+      - name: Run a simple script
+        run: |
+          echo "Hello, this is a test job triggered by a push to the 'main' branch!"
+          echo "The runner is working!"
+
+      - name: List files
+        run: |
+          ls -l
