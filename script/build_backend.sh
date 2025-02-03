@@ -28,7 +28,7 @@ rm -rf dist/* || true
 log "rm venv"
 rm -rf venv/ || true
 
- 
+
 
 # Create a new virtual environment
 log "Creating venv"
@@ -44,9 +44,7 @@ venv/bin/pip install -U pip setuptools wheel build
 
 # Build wheel distribution for backend
 log "Building wheel"
-# Change directory to where setup.py is located
 venv/bin/python -m build --no-isolation --wheel
-
 
  
 
@@ -54,3 +52,19 @@ venv/bin/python -m build --no-isolation --wheel
 log "Copy wheels to: ../ansible/playbooks/files/"
 cp dist/*.whl ansible/roles/backend_stock_collector/files/
 log "######################################################### NEW BUILD CREATED, AND COPIED TO ANSIBLE FILES DIRECTORY IN ORDER TO BE DEPLOYED   ################################################"
+
+# Log in to Docker
+docker login --username volkan.akcora@gmail.com --password hlktvurkxllu996 docker.io
+
+# Clean the current images
+docker system prune -a --volumes
+
+# Run Docker build to create a new image with the desired repository and tag
+docker build -t volkanakcora96/stock_collector_django:2.0 -f Dockerfile .
+
+
+# Tag the Docker image
+#docker tag stockcollector_django volkanakcora96/stock_collector_django:latest
+
+# Push the image to Docker Hub
+docker push volkanakcora96/stock_collector_django:2.0

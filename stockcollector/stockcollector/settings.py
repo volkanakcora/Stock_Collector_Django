@@ -80,12 +80,13 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'stock',
-        'USER': 'postgres',
+        'USER': 'stock',
         'PASSWORD': '2cNUVfN~Fp`2Zzh3EV2rcV49&~^Ev4y%%',
-        'HOST': 'localhost',
+        'HOST': 'postgres-service',  # Change this from localhost to the service name
         'PORT': '5432',
     }
 }
+
 
 COMPANIES_BIST = {
     'default': {
@@ -2877,6 +2878,7 @@ USE_I18N = True
 
 USE_TZ = False
 
+APSCHEDULER_RUN_NOW_TIMEOUT = 100000
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/

@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stockcollector-deployment
+  namespace: production
+  labels:
+    app: stockcollector
+spec:
+  replicas: 1  # Adjust the number of replicas as needed
+  selector:
+    matchLabels:
+      app: stockcollector
+  template:
+    metadata:
+      labels:
+        app: stockcollector
+    spec:
+      containers:
+      - name: stock-prod
+        image: volkanakcora96/stock_collector_django
+        command: ["/bin/bash"]
+        args: ["-c", "stock_collector makemigrations && stock_collector migrate && stock_collector runserver 0.0.0.0:9090"]
+        ports:
+          - containerPort: 8000  # Expose the port on which your Django app will run
+        volumeMounts:
+        - name: stock-prod-pv
+          mountPath: /var
+      volumes:
+      - name: stock-prod-pv
+        persistentVolumeClaim:
+          claimName: stockcollector-prod-claim

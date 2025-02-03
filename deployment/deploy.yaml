@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: stockcollector-prod-claim
+  namespace: production
+spec:
+  accessModes:
+  - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stockcollector-deployment
+  namespace: production
+spec:
+  replicas: 1 # Adjust the number of replicas as needed
+  selector:
+    matchLabels:
+      app: stockcollector
+  template:
+    metadata:
+      labels:
+        app: stockcollector
+    spec:
+      containers:
+      - name: stock-prod
+        image: volkanakcora96/stock_collector_django:2.0
+        command: ["/bin/bash"]
+        args: ["-c", "stock_collector migrate && stock_collector runserver 0.0.0.0:8000"]
+        volumeMounts:
+        - name: stock-prod-pv
+          mountPath: /var
+      volumes:
+      - name: stock-prod-pv
+        persistentVolumeClaim:
+          claimName: stockcollector-prod-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stock-prod-svc
+  namespace: production
+spec:
+  selector:
+    app: stockcollector
+  ports:
+  - protocol: TCP
+    port: 80 # The port on which the service will be exposed
+    targetPort: 8000 # Change to match the port the app runs on

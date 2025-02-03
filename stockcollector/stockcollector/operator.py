@@ -139,40 +139,40 @@ def start():
         replace_existing=True,
     )
     ### Notification Jobs
-    scheduler.add_job(
-        send_bist_daily,
-        trigger=CronTrigger(hour=10, minute=40),
-        name='send_data_bist_daily',
-        id='send_data_bist_job_daily',
-        replace_existing=True,
-    )
+    # scheduler.add_job(
+    #     send_bist_daily,
+    #     trigger=CronTrigger(hour=10, minute=40),
+    #     name='send_data_bist_daily',
+    #     id='send_data_bist_job_daily',
+    #     replace_existing=True,
+    # )
 
-    scheduler.add_job(
-        send_foreign_daily,
-        trigger=CronTrigger(hour=11, minute=50),
-        name='send_data_foreign_daily',
-        id='send_data_foreign_job_daily',
-        replace_existing=True,
-    )
+    # scheduler.add_job(
+    #     send_foreign_daily,
+    #     trigger=CronTrigger(hour=11, minute=50),
+    #     name='send_data_foreign_daily',
+    #     id='send_data_foreign_job_daily',
+    #     replace_existing=True,
+    # )
     ##################################################################################################
 
     # WEDNESDAY JOBS
     ### Notification Jobs
-    scheduler.add_job(
-        send_bist_3_days,
-        trigger=CronTrigger(hour=9, minute=45, day_of_week='wed'),
-        name='send_data_bist_3_days',
-        id='send_data_bist_job_3_days',
-        replace_existing=True,
-    )
+    # scheduler.add_job(
+    #     send_bist_3_days,
+    #     trigger=CronTrigger(hour=9, minute=45, day_of_week='wed'),
+    #     name='send_data_bist_3_days',
+    #     id='send_data_bist_job_3_days',
+    #     replace_existing=True,
+    # )
 
-    scheduler.add_job(
-        send_foreign_3_days,
-        trigger=CronTrigger(hour=9, minute=40, day_of_week='wed'),
-        name='send_data_foreign_3_days',
-        id='send_data_foreign_job_3_days',
-        replace_existing=True,
-    )
+    # scheduler.add_job(
+    #     send_foreign_3_days,
+    #     trigger=CronTrigger(hour=9, minute=40, day_of_week='wed'),
+    #     name='send_data_foreign_3_days',
+    #     id='send_data_foreign_job_3_days',
+    #     replace_existing=True,
+    # )
 
     ######################################################################################################
 
