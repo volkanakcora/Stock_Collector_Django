@@ -1,22 +1,88 @@
-name: CI Workflow
+name: Build and Deploy Stock Collector Django
 
 on:
   push:
     branches:
-      - main  # Adjust to the branch you want to trigger the job on
+      - main  # Adjust to your preferred branch
+  # Optionally, you can trigger it on other events, like pull requests
 
 jobs:
-  test:
-    runs-on: self-hosted  # This tells GitHub to use your self-hosted runner
+  build:
+    runs-on: self-hosted  # This will run on your self-hosted runner
+
     steps:
       - name: Check out code
         uses: actions/checkout@v2  # Checkout the code to the runner's workspace
 
-      - name: Run a simple script
-        run: |
-          echo "Hello, this is a test job triggered by a push to the 'main' branch!"
-          echo "The runner is working!"
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'  # Choose the version of Python you want to use (ensure it's >= 3.5)
 
-      - name: List files
+      - name: Log using Python version
         run: |
-          ls -l
+          echo "[SCRIPT] Using python: ${{ steps.setup-python.outputs.python-version }}"
+
+      - name: Navigate to backend directory
+        run: |
+          echo "[SCRIPT] cd into ./backend"
+          cd backend
+
+      - name: Check Python version (>= 3.5)
+        run: |
+          python -c "import sys; assert sys.version_info >= (3, 5), 'Python 3.5 or newer is required. Currently using: {}'.format(sys.version_info)"
+      
+      - name: Clear dist folder
+        run: |
+          echo "[SCRIPT] Clear dist folder"
+          rm -rf dist/* || true
+
+      - name: Remove existing virtual environment
+        run: |
+          echo "[SCRIPT] rm venv"
+          rm -rf venv/ || true
+
+      - name: Create a new virtual environment
+        run: |
+          echo "[SCRIPT] Creating venv"
+          python -m venv venv
+
+      - name: Update package tools in venv
+        run: |
+          echo "[SCRIPT] Update package tools in venv"
+          venv/bin/pip install -U pip setuptools wheel build
+
+      - name: Build wheel
+        run: |
+          echo "[SCRIPT] Building wheel"
+          venv/bin/python -m build --no-isolation --wheel
+
+      - name: Copy wheels to ansible directory
+        run: |
+          echo "[SCRIPT] Copy wheels to: ../ansible/playbooks/files/"
+          cp dist/*.whl ansible/roles/backend_stock_collector/files/
+        # This will copy the wheel files after the build process
+
+      - name: Docker login
+        run: |
+          echo "[SCRIPT] Logging in to Docker"
+          echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
+
+      - name: Clean current Docker images
+        run: |
+          echo "[SCRIPT] Cleaning Docker system"
+          docker system prune -a --volumes -f
+
+      - name: Build Docker image
+        run: |
+          echo "[SCRIPT] Building Docker image"
+          docker build -t volkanakcora96/stock_collector_django:2.0 -f Dockerfile .
+
+      - name: Push Docker image to Docker Hub
+        run: |
+          echo "[SCRIPT] Pushing Docker image to Docker Hub"
+          docker push volkanakcora96/stock_collector_django:2.0
+
+      - name: Final message
+        run: |
+          echo "[SCRIPT] ######################################################### NEW BUILD CREATED, AND COPIED TO ANSIBLE FILES DIRECTORY IN ORDER TO BE DEPLOYED   ################################################"
