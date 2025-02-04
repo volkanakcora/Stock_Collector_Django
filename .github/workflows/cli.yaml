@@ -15,7 +15,7 @@ jobs:
       - name: Run a simple script
         run: |
           echo "Hello, this is a test job triggered by a push to the 'main' branch!"
-          echo "The runner is working!"
+          echo "The runner is working from argocd this time!!!"
 
       - name: List files
         run: |
