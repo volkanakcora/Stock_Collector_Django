@@ -130,7 +130,7 @@ setup(
     url="",
     # Link from which the project can be downloaded
     download_url="",
-    # List of keywords
+    # List of keywords, and try to iunstall it all
     keywords=[],
     # List of packages to install with this one
     install_requires=requirements,
