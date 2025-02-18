@@ -1,0 +1,52 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel build virtualenv
+
+      - name: Create virtual environment
+        run: |
+          python -m virtualenv venv
+          source venv/bin/activate
+          pip install -U pip setuptools wheel build
+
+      - name: Build wheel
+        run: |
+          rm -rf dist/* || true
+          venv/bin/python -m build --no-isolation --wheel
+
+      - name: Copy wheel to Ansible files
+        run: |
+          mkdir -p ansible/roles/backend_stock_collector/files/
+          cp dist/*.whl ansible/roles/backend_stock_collector/files/
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login --username volkan.akcora@gmail.com --password-stdin
+
+      - name: Clean Docker system
+        run: docker system prune -a --volumes -f
+
+      - name: Build Docker image
+        run: docker build -t volkanakcora96/stock_collector_django:2.0 -f Dockerfile .
+
+      - name: Push Docker image
+        run: docker push volkanakcora96/stock_collector_django:2.0
