@@ -46,7 +46,7 @@ jobs:
         run: docker system prune -a --volumes -f
 
       - name: Build Docker image
-        run: docker build -t volkanakcora96/stock_collector_django -f Dockerfile .
+        run: docker build -t volkanakcora96/stock_collector_django:2.0 -f Dockerfile .
 
       - name: Push Docker image
-        run: docker push volkanakcora96/stock_collector_django
+        run: docker push volkanakcora96/stock_collector_django:2.0
