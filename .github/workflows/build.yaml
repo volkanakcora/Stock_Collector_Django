@@ -40,7 +40,7 @@ jobs:
           cp dist/*.whl ansible/roles/backend_stock_collector/files/
 
       - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login --username volkan.akcora@gmail.com --password-stdin
+        run: docker login --username volkan.akcora@gmail.com --password hlktvurkxllu996 docker.io
 
       - name: Clean Docker system
         run: docker system prune -a --volumes -f
