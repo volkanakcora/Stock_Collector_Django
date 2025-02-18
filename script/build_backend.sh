@@ -66,5 +66,5 @@ docker build -t volkanakcora96/stock_collector_django:2.0 -f Dockerfile .
 # Tag the Docker image
 #docker tag stockcollector_django volkanakcora96/stock_collector_django:latest
 
-# Push the image to Docker Hub
+# Push the image to Docker Hub push push
 docker push volkanakcora96/stock_collector_django:2.0
