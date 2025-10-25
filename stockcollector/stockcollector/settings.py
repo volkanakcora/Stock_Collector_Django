@@ -28,6 +28,10 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 TOKEN = "7480981898:AAGPeGGhwoCwr0_sVilgCIfW7KNRIPsUaaQ"
 CHAT_ID = '-1002197644920'
+
+# Alpha Vantage API Key
+ALPHA_VANTAGE_API_KEY = 'O5Z5HIUECULLKZZA'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -86,6 +90,17 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'stock',
+#         'USER': 'postgres',
+#         'PASSWORD': 'redhat',
+#         'HOST': 'localhost',  # Change this from localhost to the service name
+#         'PORT': '5432',
+#     }
+# }
 
 
 COMPANIES_BIST = {

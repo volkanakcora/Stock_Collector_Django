@@ -5,6 +5,7 @@ from .models import StockBST
 from .utils.micro_macro_functions import micro_functions
 from .utils.functions import get_stock_prices, get_day_of_the_month, get_yesterday
 import logging
+import time
 from django.apps import AppConfig 
 
 class StocksBST(AppConfig):
@@ -21,16 +22,32 @@ class StocksBST(AppConfig):
         current_date = datetime.datetime.now()
         print(f"Stock Data collection has started: [{current_date}]")
 
-        start_date = "2022-01-01"
+        start_date = "2024-01-01"
         end_date = current_date.strftime("%Y-%m-%d")  
 
         companies = list(settings.COMPANIES_BIST["default"].values())
+        
+        print(f"📊 Toplam {len(companies)} BIST hissesi çekilecek")
+        print("⚠️  Yahoo Finance rate limiting nedeniyle yavaş çalışacak...")
 
         stock_data = pd.DataFrame()
-
-        for company in companies:
+        
+        # WORKAROUND: Her hisse için rate limiting ile veri çek
+        for idx, company in enumerate(companies, 1):
+            print(f"[{idx}/{len(companies)}] {company} çekiliyor...")
+            
             data = get_stock_prices(start_date, end_date, company)
-            stock_data = pd.concat([stock_data, data])
+            
+            if not data.empty:
+                stock_data = pd.concat([stock_data, data], ignore_index=True)
+                print(f"  ✓ {company}: {len(data)} satır eklendi")
+            else:
+                print(f"  ✗ {company}: Veri alınamadı")
+            
+            # WORKAROUND: Her 5 hisseden sonra 10 saniye bekle (rate limit)
+            if idx % 5 == 0 and idx < len(companies):
+                print(f"  ⏸️  Rate limit için 10s bekleniyor...")
+                time.sleep(10)
 
         # Process and calculate values
         stock_data.reset_index(drop=True, inplace=True)

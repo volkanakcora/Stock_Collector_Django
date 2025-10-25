@@ -1,10 +1,7 @@
 import numpy as np
 import pandas as pd
 from .functions import get_yesterday
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
 import logging
-import pandas as pd
 
 class micro_functions:
     def __init__(self, symbol, key, folder=None):
@@ -12,31 +9,98 @@ class micro_functions:
         self.key = key
         self.folder = folder
 
+    @staticmethod
     def calc_vol(df):
-        df['returns'] = np.log(df.Close).diff().round(4)
-        df['volatility'] = df.returns.rolling(21).std().round(4)
-        df['change'] = df['Close'].diff()
-        df['hi_low_spread'] = ((df['High'] - df['Low']) / df['Open']).round(2)
-        df['exp_change'] = (df.volatility * df.Close.shift(1)).round(2)
-        df['magnitude'] = (df.change / df.exp_change).round(2)
-        df['abs_magnitude'] = np.abs(df.magnitude)
-        df.dropna(inplace= True)
+        """
+        Volatilite ve diğer istatistikleri hesapla
+        
+        Args:
+            df: OHLCV verisi içeren DataFrame
+        """
+        # Boş DataFrame kontrolü
+        if df.empty:
+            return
+        
+        # DEBUG: Fonksiyon versiyonu
+        logging.info("✓ calc_vol() V2.0 - FIXED VERSION")
+            
+        # Kolon isimlerini esnek kullan (Close veya close_price)
+        close_col = 'Close' if 'Close' in df.columns else 'close_price'
+        high_col = 'High' if 'High' in df.columns else 'high_price'
+        low_col = 'Low' if 'Low' in df.columns else 'low_price'
+        open_col = 'Open' if 'Open' in df.columns else 'open_price'
+        
+        # Getiri hesaplama - Series olarak al (FIX için kritik!)
+        close_series = df[close_col]
+        df['returns'] = np.log(close_series).diff().round(4)
+        
+        # Volatilite (21 günlük rolling std)
+        df['volatility'] = df['returns'].rolling(21).std().round(4)
+        
+        # Günlük değişim
+        df['change'] = close_series.diff()
+        
+        # Yüksek-düşük spread
+        high_series = df[high_col]
+        low_series = df[low_col]
+        open_series = df[open_col]
+        df['hi_low_spread'] = ((high_series - low_series) / open_series).round(2)
+        
+        # Beklenen değişim
+        df['exp_change'] = (df['volatility'] * close_series.shift(1)).round(2)
+        
+        # Magnitude (büyüklük)
+        df['magnitude'] = (df['change'] / df['exp_change']).round(2)
+        df['abs_magnitude'] = np.abs(df['magnitude'])
+        
+        # NaN satırları temizle
+        df.dropna(inplace=True)
     
+    @staticmethod
     def calc_vol_for_ml(df):
-        df['returns'] = np.log(df.close_price).diff().round(4)
-        df['volatility'] = df.returns.rolling(21).std().round(4)
-        df['change'] = df['close_price'].diff()
-        df['hi_low_spread'] = ((df['High'] - df['Low']) / df['Open']).round(2)
-        df['exp_change'] = (df.volatility * df.close_price.shift(1)).round(2)
-        df['magnitude'] = (df.change / df.exp_change).round(2)
-        df['abs_magnitude'] = np.abs(df.magnitude)
-        df.dropna(inplace= True)
+        """
+        ML için volatilite hesaplama (lowercase kolonlar için)
+        
+        Args:
+            df: OHLCV verisi içeren DataFrame
+        """
+        # Boş DataFrame kontrolü
+        if df.empty:
+            return
+            
+        # Getiri hesaplama - Series olarak al
+        close_series = df['close_price']
+        df['returns'] = np.log(close_series).diff().round(4)
+        
+        # Volatilite (21 günlük rolling std)
+        df['volatility'] = df['returns'].rolling(21).std().round(4)
+        
+        # Günlük değişim
+        df['change'] = close_series.diff()
+        
+        # Yüksek-düşük spread (büyük harfli kolonlar kullanılıyor)
+        high_series = df['High']
+        low_series = df['Low']
+        open_series = df['Open']
+        df['hi_low_spread'] = ((high_series - low_series) / open_series).round(2)
+        
+        # Beklenen değişim
+        df['exp_change'] = (df['volatility'] * close_series.shift(1)).round(2)
+        
+        # Magnitude (büyüklük)
+        df['magnitude'] = (df['change'] / df['exp_change']).round(2)
+        df['abs_magnitude'] = np.abs(df['magnitude'])
+        
+        # NaN satırları temizle
+        df.dropna(inplace=True)
 
+    @staticmethod
     def daily_screen(df):
         df = df[df['date'] == str(get_yesterday())]
         df = df.sort_values(by=['daily_change'], ascending=False)
         return df.head(50)
 
+    @staticmethod
     def monitor_stocks(df):
         df['1_day_return'] = (df['close_price'] / df['close_price'].shift(1) - 1) * 100
         df['3_days_return'] = (df['close_price'] / df['close_price'].shift(3) - 1) * 100
@@ -57,8 +121,7 @@ class micro_functions:
         return (top_gainers_1_day, top_gainers_3_days, top_gainers_5_days, high_volume_stocks,
                 biggest_decliners_3_months, increased_volume_recently)
     
-
-  
+    @staticmethod
     def plot_stock_prices(data, x_column='date', y_column='close_price', title_prefix='Stock Prices', n_cols=3):
         """
         Plot stock prices from a DataFrame.

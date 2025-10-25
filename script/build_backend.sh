@@ -60,6 +60,7 @@ docker login --username volkan.akcora@gmail.com --password hlktvurkxllu996 docke
 docker system prune -a --volumes
 
 # Run Docker build to create a new image with the desired repository and tag
+docker build -t volkanakcora96/stock_collector_django:1.0 -f Dockerfile .
 docker build -t volkanakcora96/stock_collector_django:2.0 -f Dockerfile .
 
 
@@ -68,3 +69,5 @@ docker build -t volkanakcora96/stock_collector_django:2.0 -f Dockerfile .
 
 # Push the image to Docker Hub push push
 docker push volkanakcora96/stock_collector_django:2.0
+docker push volkanakcora96/stock_collector_django:1.0
+

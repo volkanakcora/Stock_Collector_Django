@@ -1,198 +1,125 @@
+"""
+Stock Collector Scheduler - Basitleştirilmiş Versiyon
+Sadece veri toplama işlemi yapar, email/ML yok
+"""
 from apscheduler.schedulers.background import BackgroundScheduler
 from django_apscheduler.jobstores import DjangoJobStore, register_events
-from stockcollector.data.retrieve_foreign import Stocks
-from stockcollector.data.retrieve_bist import StocksBST
-from stockcollector.data.send_foreign_weekly import stock_analytics
-from stockcollector.data.send_bist_weekly import stock_analytics_bist
-from stockcollector.data.send_bist_3_days import stock_analytics_send_bist_3_days
-from stockcollector.data.send_bist_daily import stock_analytics_send_bist_daily
-from stockcollector.data.send_bist_5_days import stock_analytics_send_bist_5_days
-from stockcollector.data.send_foreign_3_days import stock_analytics_send_foreign_3_days
-from stockcollector.data.send_foreign_daily import stock_analytics_send_foreign_daily
-from stockcollector.data.send_foreign_5_days import stock_analytics_send_foreign_5_days
-
-from stockcollector.data.bist_ML import StocksBSTPredict
-from stockcollector.data.foreign_ML import StocksPredict
-from django_apscheduler import util
 from apscheduler.triggers.cron import CronTrigger
+from apscheduler.triggers.interval import IntervalTrigger
 from django.apps import apps
-from django_apscheduler.models import DjangoJobExecution
 import logging
 
-def send_bist_daily():
-    stocks_app = apps.get_app_config('data')
-    stock_obj = stock_analytics_send_bist_daily(stocks_app.name, stocks_app.module)
-    stock_obj.run()
+# Veri toplama modülleri
+from stockcollector.data.retrieve_foreign import Stocks
+from stockcollector.data.retrieve_bist import StocksBST
+from stockcollector.data.retrieve_realtime import StocksRealtime, StockRealtimeCleanup
+from stockcollector.data.retrieve_funds import Tefas  # YENİ!
 
-def send_bist_3_days():
-    stocks_app = apps.get_app_config('data')
-    stock_obj = stock_analytics_send_bist_3_days(stocks_app.name, stocks_app.module)
-    stock_obj.run()
-
-def send_bist_5_days():
-    stocks_app = apps.get_app_config('data')
-    stock_obj = stock_analytics_send_bist_5_days(stocks_app.name, stocks_app.module)
-    stock_obj.run()
-
-def send_foreign_daily():
-    stocks_app = apps.get_app_config('data')
-    stock_obj = stock_analytics_send_foreign_daily(stocks_app.name, stocks_app.module)
-    stock_obj.run()
-
-def send_foreign_3_days():
-    stocks_app = apps.get_app_config('data')
-    stock_obj = stock_analytics_send_foreign_3_days(stocks_app.name, stocks_app.module)
-    stock_obj.run()
-
-def send_foreign_5_days():
-    stocks_app = apps.get_app_config('data')
-    stock_obj = stock_analytics_send_foreign_5_days(stocks_app.name, stocks_app.module)
-    stock_obj.run()
 
 def retrieve_data_bist():
+    """BIST hisselerinden günlük veri çek"""
     stocks_app = apps.get_app_config('data')
     stock_obj = StocksBST(stocks_app.name, stocks_app.module)
     stock_obj.run()
 
+
 def retrieve_data_foreign():
+    """Yabancı hisselerinden günlük veri çek"""
     stocks_app = apps.get_app_config('data')  
     stocks_obj = Stocks(stocks_app.name, stocks_app.module)
     stocks_obj.run()
 
-def send_foreign():
-    email_app = apps.get_app_config('data')  
-    email_obj = stock_analytics(email_app.name, email_app.module)
-    email_obj.run()
 
-def send_bist():
-    email_app = apps.get_app_config('data')  
-    email_obj = stock_analytics_bist(email_app.name, email_app.module)
-    email_obj.run()
-
-def predict_bist():
+def retrieve_funds():
+    """Türk yatırım fonlarından veri çek (TEFAS)"""
     stocks_app = apps.get_app_config('data')
-    stock_obj = StocksBSTPredict(stocks_app.name, stocks_app.module)
-    stock_obj.run()
+    funds_obj = Tefas(stocks_app.name, stocks_app.module)
+    funds_obj.run()
 
-def predict_foreign():
+
+def retrieve_realtime():
+    """Real-time (intraday) veri çek - her 30 saniye"""
     stocks_app = apps.get_app_config('data')
-    stock_obj = StocksPredict(stocks_app.name, stocks_app.module)
-    stock_obj.run()
+    realtime_obj = StocksRealtime(stocks_app.name, stocks_app.module)
+    realtime_obj.run()
+
+
+def cleanup_realtime():
+    """Eski real-time veriyi temizle - günde 1 kere"""
+    stocks_app = apps.get_app_config('data')
+    cleanup_obj = StockRealtimeCleanup(stocks_app.name, stocks_app.module)
+    cleanup_obj.run()
 
 
 def start():
+    """Scheduler başlat"""
     scheduler = BackgroundScheduler()
     scheduler.add_jobstore(DjangoJobStore(), 'default')
     register_events(scheduler)
     
-    ##### Monday #####
-
-    ### Prediction Jobs
-    scheduler.add_job(
-        predict_bist,
-        trigger=CronTrigger(hour=10, minute=00, day_of_week='mon'),
-        name='precit_data_bist',
-        id='predict_data_job_bist',
-        replace_existing=True,
-    )
-
-    scheduler.add_job(
-        predict_foreign,
-        trigger=CronTrigger(hour=11, minute=30, day_of_week='mon'),
-        name='precit_data_foreign',
-        id='predict_data_job_foreign',
-        replace_existing=True,
-    )
-    ### Notification Jobs
-    scheduler.add_job(
-        send_foreign,
-        trigger=CronTrigger(hour=8, minute=40, day_of_week='mon'),
-        name='send_data_foreign',
-        id='send_data_foreign_job',
-        replace_existing=True,
-    )
-
-    scheduler.add_job(
-        send_bist,
-        trigger=CronTrigger(hour=8, minute=45, day_of_week='mon'),
-        name='send_data_bist',
-        id='send_data_bist_job',
-        replace_existing=True,
-    )
-    ##########################################################################################
+    # ==========================================
+    # GÜNLÜK VERİ TOPLAMA (Her gün 1 kere)
+    # ==========================================
     
-    # Everyday Jobs
-    ### Data Retrive jobs
-    scheduler.add_job(
-        retrieve_data_foreign,
-        trigger=CronTrigger(hour=5, minute=00),
-        name='retrieve_data',
-        id='retrieve_data_job',
-        replace_existing=True,
-    )
-
+    # BIST verileri - her gün 07:00
     scheduler.add_job(
         retrieve_data_bist,
-        trigger=CronTrigger(hour=7, minute=20),
-        name='retrieve_data_bist',
-        id='retrieve_data_job_bist',
-        replace_existing=True,
-    )
-    ### Notification Jobs
-    # scheduler.add_job(
-    #     send_bist_daily,
-    #     trigger=CronTrigger(hour=10, minute=40),
-    #     name='send_data_bist_daily',
-    #     id='send_data_bist_job_daily',
-    #     replace_existing=True,
-    # )
-
-    # scheduler.add_job(
-    #     send_foreign_daily,
-    #     trigger=CronTrigger(hour=11, minute=50),
-    #     name='send_data_foreign_daily',
-    #     id='send_data_foreign_job_daily',
-    #     replace_existing=True,
-    # )
-    ##################################################################################################
-
-    # WEDNESDAY JOBS
-    ### Notification Jobs
-    # scheduler.add_job(
-    #     send_bist_3_days,
-    #     trigger=CronTrigger(hour=9, minute=45, day_of_week='wed'),
-    #     name='send_data_bist_3_days',
-    #     id='send_data_bist_job_3_days',
-    #     replace_existing=True,
-    # )
-
-    # scheduler.add_job(
-    #     send_foreign_3_days,
-    #     trigger=CronTrigger(hour=9, minute=40, day_of_week='wed'),
-    #     name='send_data_foreign_3_days',
-    #     id='send_data_foreign_job_3_days',
-    #     replace_existing=True,
-    # )
-
-    ######################################################################################################
-
-    # FRIDAY JOBS
-    #NOTIFICATION JOBS
-    scheduler.add_job(
-        send_bist_5_days,
-        trigger=CronTrigger(hour=9, minute=45, day_of_week='fri'),
-        name='send_data_bist_5_days',
-        id='send_data_bist_job_5_days',
+        trigger=CronTrigger(hour=7, minute=0),
+        name='Günlük BIST Veri Toplama',
+        id='daily_bist_data',
         replace_existing=True,
     )
 
+    # Foreign verileri - her gün 05:00
     scheduler.add_job(
-        send_foreign_5_days,
-        trigger=CronTrigger(hour=9, minute=40, day_of_week='fri'),
-        name='send_data_foreign_5_days',
-        id='send_data_foreign_5_days',
+        retrieve_data_foreign,
+        trigger=CronTrigger(hour=5, minute=0),
+        name='Günlük Foreign Veri Toplama',
+        id='daily_foreign_data',
+        replace_existing=True,
+    )
+
+    # Fonlar - her gün 19:00 (TEFAS günlük kapanış sonrası)
+    scheduler.add_job(
+        retrieve_funds,
+        trigger=CronTrigger(hour=19, minute=0),
+        name='Günlük Fon Veri Toplama',
+        id='daily_fund_data',
+        replace_existing=True,
+    )
+
+    # ==========================================
+    # REAL-TIME VERİ (Sadece borsa saatlerinde)
+    # ==========================================
+    
+    # Real-time veri çekme - her 30 saniye (borsa açıkken)
+    # US Market: 14:30-21:00 UTC (09:30-16:00 EST)
+    # BIST: 06:30-15:00 UTC (09:30-18:00 Istanbul)
+    scheduler.add_job(
+        retrieve_realtime,
+        trigger=IntervalTrigger(seconds=30),
+        name='Real-Time Veri (Her 30sn)',
+        id='realtime_stock_data',
+        replace_existing=True,
+    )
+    # Not: Job her 30 saniyede çalışır ama içeride borsa kontrolü var
+
+    # ==========================================
+    # TEMİZLİK (Günde 1 kere)
+    # ==========================================
+    
+    # Eski real-time veriyi sil - her gün 02:00
+    scheduler.add_job(
+        cleanup_realtime,
+        trigger=CronTrigger(hour=2, minute=0),
+        name='Eski Veri Temizleme',
+        id='cleanup_old_data',
         replace_existing=True,
     )
     
     scheduler.start()
-    logging.info("Scheduler started.")
+    logging.info("✅ Scheduler başlatıldı - Veri toplama aktif")
+    logging.info("📊 Günlük veri: 05:00 (Foreign), 07:00 (BIST), 19:00 (Fonlar)")
+    logging.info("🔴 Real-time: Her 30 saniye (borsa saatlerinde)")
+    logging.info("🧹 Temizlik: Her gün 02:00")
+
