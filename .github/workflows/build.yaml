@@ -39,6 +39,14 @@ jobs:
           mkdir -p ansible/roles/backend_stock_collector/files/
           cp dist/*.whl ansible/roles/backend_stock_collector/files/
 
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git add ansible/roles/backend_stock_collector/files/*.whl
+          git commit -m "Update wheel file [skip ci]" || echo "No changes to commit"
+          git push
+
       - name: Log in to Docker Hub
         run: docker login --username volkan.akcora@gmail.com --password hlktvurkxllu996 docker.io
 
