@@ -198,3 +198,58 @@ HTTP Request → View → Service → Repository → Model → Database
                 ↓
             Response ← Serializer ← Service ← Repository ← Model ← Database
 ```
+
+## 🗄️ Database Design
+
+### Time-Series Optimization Strategy
+
+The platform uses a dual-table approach for optimal performance:
+
+#### 1. Real-time Data Table (`financial_data_realtime`)
+- **Update frequency**: Every 15 seconds
+- **Data retention**: Last 24 hours only
+- **Purpose**: Live price updates and intraday charts
+- **Indexes**: Optimized for latest data queries
+
+#### 2. Historical Data Table (`financial_data_historical`)
+- **Update frequency**: Daily (end of trading day)
+- **Data retention**: 5+ years
+- **Purpose**: Long-term analysis and historical charts
+- **Indexes**: Optimized for date range queries
+
+### Supported Financial Instruments
+
+- **Stocks**: Individual company shares
+- **ETFs**: Exchange-traded funds
+- **Commodities**: Gold, Silver, Oil, etc.
+- **Cryptocurrencies**: Bitcoin, Ethereum, etc.
+- **Indices**: Market indices and benchmarks
+
+## ✨ Key Features
+
+### 🔍 **Public Features**
+- **SEO-friendly instrument pages**: `<url>.com/AAPL`, `<url>.com/GOLD`
+- **Real-time charts**: 15-second updates with multiple timeframes (1D, 5D, 1W, 2W, 1M, 1Y, 5Y)
+- **View comments**: Read community discussions on each instrument page
+- **Browse instruments**: Explore all available financial instruments
+
+### 🔐 **Authenticated User Features**
+- **Comment participation**: Leave comments and like/unlike others' comments
+- **Social engagement**: User reputation system based on comment interactions
+- **Personal watchlists**: Create and manage watchlists without alerts
+- **Portfolio tracking**: Track your investments and performance
+- **Real-time data access**: Live price updates via WebSocket
+
+### � **Premium User Features**
+- **Price alerts**: Get notified when instruments reach target prices
+- **Advanced alert types**: Price above/below, percentage change alerts
+- **Email & push notifications**: Multi-channel alert delivery
+- **Higher API limits**: Increased rate limits for data access
+- **Priority support**: Premium customer support
+
+### 📊 **Financial Instruments Supported**
+- **Stocks**: Individual company shares (AAPL, GOOGL, TSLA, etc.)
+- **ETFs**: Exchange-traded funds
+- **Commodities**: Gold, Silver, Oil, and other precious metals
+- **Cryptocurrencies**: Bitcoin, Ethereum, and major altcoins
+- **Indices**: Market indices and benchmarks
