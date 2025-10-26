@@ -64,7 +64,7 @@ def start():
     # BIST verileri - her gün 07:00
     scheduler.add_job(
         retrieve_data_bist,
-        trigger=CronTrigger(hour=7, minute=0),
+        trigger=CronTrigger(day_of_week='sat',hour=7, minute=0),
         name='Günlük BIST Veri Toplama',
         id='daily_bist_data',
         replace_existing=True,
@@ -73,18 +73,18 @@ def start():
     # Foreign verileri - her gün 05:00
     scheduler.add_job(
         retrieve_data_foreign,
-        trigger=CronTrigger(hour=5, minute=0),
+        trigger=CronTrigger(day_of_week='sat', hour=1, minute=0),
         name='Günlük Foreign Veri Toplama',
         id='daily_foreign_data',
         replace_existing=True,
     )
 
-    # Fonlar - her gün 19:00 (TEFAS günlük kapanış sonrası)
+    # Fonlar - her hafta cuma 19:00 (TEFAS kapanış sonrası)
     scheduler.add_job(
         retrieve_funds,
-        trigger=CronTrigger(hour=19, minute=0),
-        name='Günlük Fon Veri Toplama',
-        id='daily_fund_data',
+        trigger=CronTrigger(day_of_week='fri', hour=19, minute=0),
+        name='Haftalık Cuma Fon Veri Toplama',
+        id='weekly_fund_data',
         replace_existing=True,
     )
 
